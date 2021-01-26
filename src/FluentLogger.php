@@ -325,7 +325,14 @@ class FluentLogger implements LoggerInterface
 
         if (!$socket) {
             $errors = error_get_last();
-            throw new \Exception($errors['message']);
+            if (is_array($errors) && isset($errors['message'])) {
+                $message = $errors['message'];
+            } elseif (!empty($errors)) {
+                $message = $errors;
+            } else {
+                $message = "Unknow error connection to socket";
+            }
+            throw new \Exception($message);
         }
 
         // set read / write timeout.
